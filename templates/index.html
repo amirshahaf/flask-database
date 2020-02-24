@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="text-center">
+    <div class="form-signin">
+        <h1 class="h3 mb-3 font-weight-normal">Users:</h1>
+        <ul class="list-group">
+        {%for user in users%}
+            <li class="list-group-item list-group-item-action" >{{user.username}}</li>
+        {%endfor%}
+        </ul>
+    </div>
+
+    <div><form class="form-signin" method="post" action="/update">
+        <h1 class="h3 mb-3 font-weight-normal">Edit Username:</h1>
+        <select id="old-username" name="old-username" class="custom-select custom-select-lg">
+            {%for user in users%}
+            <option value="{{user.username}}">{{user.username}}</option>
+            {%endfor%}
+        </select>
+        <label for="new-username" class="sr-only">New username</label>
+        <input type="text" id="new-username" class="form-control" name="new-username" placeholder="New username" required autofocus>
+        <p></p>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
+    </form>
+
+    <form class="form-signin" method="post" action="/delete">
+        <h1 class="h3 mb-3 font-weight-normal">Delete User:</h1>
+        <select id="delete-username" name="delete-username" class="custom-select custom-select-lg">
+            {%for user in users%}
+            <option value="{{user.username}}">{{user.username}}</option>
+            {%endfor%}
+        </select>
+        <p></p>
+        <button class="btn btn-lg btn-primary btn-block btn-danger" type="submit">Delete</button>
+    </form></div>
+
+    <form class="form-signin" method="post" action="/">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="" width="180" height="180" style="-webkit-filter: drop-shadow(2px 2px 2px #707070)">
+        <h1 class="h3 mb-3 font-weight-normal">Register:</h1>
+        <label for="username" class="sr-only">Username</label>
+        <input type="text" id="username" class="form-control" name="username" placeholder="Username" required autofocus>
+        <label for="password" class="sr-only"> Password </label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+        <button class="btn btn-lg btn-primary btn-block btn-success" type="submit">Register</button>
+    </form>
+</body>
+</html>
