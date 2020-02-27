@@ -47,7 +47,7 @@
             <div class="card-body">
                 <form class="form-signin" method="post" action="/update">
                     <h1 class="h3 mb-3 font-weight-normal">Edit Username:</h1>
-                    <select id="old-username" name="old-username" class="custom-select custom-select-lg">
+                    <select id="old-username" name="old-username" class="custom-select custom-select-md">
                         {%for user in users%}
                         <option value="{{user.username}}">{{user.username}}</option>
                         {%endfor%}
@@ -58,7 +58,7 @@
                 </form>
                 <form class="form-signin" method="post" action="/delete">
                     <h1 class="h3 mb-3 font-weight-normal">Delete User:</h1>
-                    <select id="delete-username" name="delete-username" class="custom-select custom-select-lg">
+                    <select id="delete-username" name="delete-username" class="custom-select custom-select-md">
                         {%for user in users%}
                         <option value="{{user.username}}">{{user.username}}</option>
                         {%endfor%}
