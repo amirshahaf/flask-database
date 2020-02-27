@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+app.secret_key = '8a7f43415792dadc4d9e41fef6f45307'
 db = SQLAlchemy(app)
 
 
@@ -26,9 +27,9 @@ def home():
             user = Users(username=request.form.get('username'), passw=request.form.get('password'))
             db.session.add(user)
             db.session.commit()
+            flash(f'{request.form.get("username")} Successfully registered!')
         except Exception as e:
             print('Something went wrong!')
-            print(e)
     return render_template('index.html', users=Users.query.all())
 
 
@@ -39,6 +40,7 @@ def update():
             user = Users.query.filter_by(username=request.form.get('old-username')).first()
             user.username = request.form.get('new-username')
             db.session.commit()
+            flash(f'{request.form.get("new-username")} Successfully updated!')
         except Exception as e:
             print('Something went wrong!')
             print(e)
@@ -52,10 +54,12 @@ def delete():
             user = Users.query.filter_by(username=request.form.get('delete-username')).first()
             db.session.delete(user)
             db.session.commit()
+            flash(f'Successfully deleted {request.form.get("delete-username")}')
         except Exception as e:
             print('Something went wrong!')
             print(e)
     return redirect('/')
 
+
 if __name__ == '__main__':
-	app.run(debug=True) 
+    app.run(debug=True)
