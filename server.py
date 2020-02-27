@@ -1,10 +1,8 @@
-import os
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3')
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 db = SQLAlchemy(app)
 
 
@@ -58,9 +56,3 @@ def delete():
             print('Something went wrong!')
             print(e)
     return redirect('/')
-
-
-if __name__ == '__main__':
-    db.create_all()
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
