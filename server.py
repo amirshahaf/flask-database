@@ -1,9 +1,10 @@
+import os
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3')
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 db = SQLAlchemy(app)
 
 
@@ -11,6 +12,10 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     passw = db.Column(db.String(120), unique=False, nullable=False)
+
+    def __init__(self, username, passw):
+        self.username = username
+        self.passw = passw
 
     def __repr__(self):
         return '<Username %r>' % self.username
@@ -26,8 +31,7 @@ def home():
         except Exception as e:
             print('Something went wrong!')
             print(e)
-    users = Users.query.all()
-    return render_template('index.html', users=users)
+    return render_template('index.html', users=Users.query.all())
 
 
 @app.route('/update', methods=['post', 'get'])
@@ -54,3 +58,9 @@ def delete():
             print('Something went wrong!')
             print(e)
     return redirect('/')
+
+
+if __name__ == '__main__':
+    db.create_all()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
