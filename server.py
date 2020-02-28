@@ -30,6 +30,7 @@ def home():
             flash(f'{request.form.get("username")} Successfully registered!')
         except Exception as e:
             print('Something went wrong!')
+            print(e)
     return render_template('index.html', users=Users.query.all())
 
 
