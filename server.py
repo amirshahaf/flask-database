@@ -22,9 +22,9 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String, unique=True, nullable=False)
     passw = db.Column(db.String, unique=False, nullable=False)
 
-    def __init__(self, username, passw):
+    def __init__(self, username, password):
         self.username = username
-        self.passw = passw
+        self.passw = generate_password_hash(password)
 
     def __repr__(self):
         return '<Username %r>' % self.username
@@ -43,10 +43,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         user = Users.query.filter_by(username=username).first()
-        if user is None:
-            flash('Invalid Username or password, please try again.')
-            return redirect('/login')
-        if check_password_hash(user.passw, password):
+        if user and not check_password_hash(user.passw, password):
             flash('Invalid Username or password, please try again.')
             return redirect('/login')
         login_user(user)
@@ -63,7 +60,7 @@ def register():
         if Users.query.filter_by(username=username).first():
             flash('Username already registered!')
             return redirect('/register')
-        user = Users(username=username, passw=generate_password_hash(password))
+        user = Users(username=username, password=password)
         db.session.add(user)
         db.session.commit()
         flash(f'{username} Successfully registered!')
@@ -86,7 +83,7 @@ def home():
     if request.form:
         username = request.form.get('username')
         password = request.form.get('password')
-        user = Users(username=username, passw=generate_password_hash(password))
+        user = Users(username=username, password=password)
         db.session.add(user)
         db.session.commit()
         flash(f'{request.form.get("username")} Successfully registered!')
