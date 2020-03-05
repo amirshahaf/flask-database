@@ -32,9 +32,9 @@ class Users(UserMixin, db.Model):
 
 @app.route('/', methods=['post', 'get'])
 def index():
-    if current_user:
-        return redirect('/home')
-    return redirect('/login')
+    if current_user.is_authenticated:
+        return render_template('index.html', logged=True)
+    return render_template('index.html', logged=False)
 
 
 @app.route('/login', methods=['post', 'get'])
@@ -43,12 +43,15 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         user = Users.query.filter_by(username=username).first()
-        if user and not check_password_hash(user.passw, password):
+        if user is None:
+            flash('Invalid Username or password, please try again.')
+            return redirect('/login')
+        if not check_password_hash(user.passw, password):
             flash('Invalid Username or password, please try again.')
             return redirect('/login')
         login_user(user)
         flash(f'{username} Successfully logged in!')
-        return redirect('/home')
+        return redirect('/profile')
     return render_template('login.html')
 
 
@@ -76,9 +79,9 @@ def logout():
     return redirect('/login')
 
 
-@app.route('/home', methods=['post', 'get'])
+@app.route('/profile', methods=['post', 'get'])
 @login_required
-def home():
+def profile():
     name = current_user.username
     if request.form:
         username = request.form.get('username')
@@ -87,7 +90,7 @@ def home():
         db.session.add(user)
         db.session.commit()
         flash(f'{request.form.get("username")} Successfully registered!')
-    return render_template('home.html', users=Users.query.all(), username=name)
+    return render_template('profile.html', users=Users.query.all(), username=name)
 
 
 @app.route('/update', methods=['post', 'get'])
@@ -97,7 +100,7 @@ def update():
         user.username = request.form.get('new-username')
         db.session.commit()
         flash(f'{request.form.get("new-username")} Successfully updated!')
-    return redirect('/home')
+    return redirect('/profile')
 
 
 @app.route('/delete', methods=['post', 'get'])
@@ -107,7 +110,7 @@ def delete():
         db.session.delete(user)
         db.session.commit()
         flash(f'Successfully deleted {request.form.get("delete-username")}')
-    return redirect('/home')
+    return redirect('/profile')
 
 
 if __name__ == '__main__':

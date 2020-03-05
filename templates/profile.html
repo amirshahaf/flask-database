@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Flask Website - register</title>
+    <title>Flask Website - {{ username }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -13,11 +13,10 @@
 <body>
 
 <div class="d-flex flex-column flex-md-row align-items-center p-2 px-md-4 mb-3 bg-dark shadow">
-  <h5 class="my-0 mr-md-auto text-white font-weight-normal">Flask Website - register</h5>
+  <h5 class="my-0 mr-md-auto text-white font-weight-normal">Welcome, {{ username }}</h5>
   <nav class="my-2 my-md-0 mr-md-3">
-    <a class="p-2 text-white" href="{{ url_for('login') }}">login</a>
   </nav>
-  <a class="btn btn-outline-primary" href="{{ url_for('register') }}">Sign up</a>
+  <a class="btn btn-outline-primary" href="{{ url_for('logout') }}">logout</a>
 </div>
 
 <div class="text-center mt-3 mb-3 ">
@@ -31,16 +30,50 @@
         <div class="card shadow">
             <div class="card-header"><h3 class="my-0 font-weight-normal">Register:</h3></div>
             <div class="card-body">
-                <form class="form-signin" method="post" action="/register">
+                <form class="form-signin" method="post" action="/profile">
                     <label for="username" class="sr-only">Username</label>
                     <input type="text" id="username" class="form-control" name="username" placeholder="Username" required autofocus>
                     <label for="password" class="sr-only"> Password </label>
                     <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-                    <button class="btn btn-lg btn-primary btn-block btn-warning mt-3" type="submit">Register</button>
+                    <button class="btn btn-lg btn-primary btn-block btn-success mt-3" type="submit">Register</button>
                 </form>
             </div>
-            <div class="card-footer text-muted">
-                Already have an account? <a class="btn btn-outline-primary" href="{{ url_for('login') }}">Sign in</a>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header"><h3 class="my-0 font-weight-normal">Manage:</h3></div>
+            <div class="card-body">
+                <form class="form-signin" method="post" action="/update">
+                    <h1 class="h3 mb-3 font-weight-normal">Edit Username:</h1>
+                    <select id="old-username" name="old-username" class="custom-select custom-select-md">
+                        {%for user in users%}
+                        <option value="{{user.username}}">{{user.username}}</option>
+                        {%endfor%}
+                    </select>
+                    <label for="new-username" class="sr-only">New username</label>
+                    <input type="text" id="new-username" class="form-control" name="new-username" placeholder="New username" required autofocus>
+                    <button class="btn btn-lg btn-primary btn-block mb-3 mt-3" type="submit">Update</button>
+                </form>
+                <form class="form-signin" method="post" action="/delete">
+                    <h1 class="h3 mb-3 font-weight-normal">Delete User:</h1>
+                    <select id="delete-username" name="delete-username" class="custom-select custom-select-md">
+                        {%for user in users%}
+                        <option value="{{user.username}}">{{user.username}}</option>
+                        {%endfor%}
+                    </select>
+                    <button class="btn btn-lg btn-primary btn-block btn-danger mb-3 mt-3" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header"><h3 class="my-0 font-weight-normal">Users:</h3></div>
+            <div class="card-body">
+                <ul class="list-group">
+                {%for user in users%}
+                    <li class="list-group-item list-group-item-action" >{{user.username}} {{user.passw}}</li>
+                {%endfor%}
+                </ul>
             </div>
         </div>
     </div>

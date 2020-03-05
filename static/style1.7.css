@@ -1,0 +1,57 @@
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+    background: #1D2B64;
+    background: -webkit-linear-gradient(to right, #F8CDDA, #1D2B64);
+    background: linear-gradient(to right, #F8CDDA, #1D2B64);
+
+}
+
+.container {
+max-width: 960px;
+}
+
+.pricing-header {
+  max-width: 700px;
+}
+
+.card {
+  min-width: 220px;
+}
+
+.btn-outline-primary {
+    background: background-color;
+}
+
+.btn-wow, .btn-sdw {
+     width: 300px;
+     height: 100px;
+     font-size: 30px;
+     text-align: center;
+     line-height: 100px;
+     color: rgba(255,255,255,0.9);
+     border-radius: 50px;
+     background: linear-gradient(-45deg, #FFA63D, #FF3D77, #338AFF, #3CF0C5);
+     background-size: 600%;
+     animation: anime 16s linear infinite;
+     text-decoration-line: none;
+}
+
+  .btn-sdw {
+     position: absolute;
+     z-index: -1;
+     filter: blur(30px);
+     opacity: 0.8;
+  }
+
+@keyframes anime {
+   0% {background-position: 0% 50%;}
+   50% {background-position: 100% 50%;}
+   100% {background-position: 0% 50%;}
