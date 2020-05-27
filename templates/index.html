@@ -2,153 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>האתר של לילי</title>
+    <title>Flask Website</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.7.css') }}">
     <style>html, body { height: 100%; }</style>
 </head>
-<body style="background-image: url('{{ url_for('static', filename='background.png') }}'); background-repeat: repeat; background-position: center center; text-align: right;">
+<body style="background-image: url('https://mdbootstrap.com/img/Photos/Others/images/76.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center center;" >
 
-<div class="d-flex flex-column flex-md-row align-items-center p-2 px-md-4 mb-3 bg-dark shadow">
-  <nav class="my-2 my-md-0 mr-md-3">
-  </nav>
-    {% if logged %}
-    <div class="row">
-        <button type="button" class="btn btn-primary mr-3" data-toggle="modal" data-target="#uploadModal">הוספת פריט</button>
-        <button type="button" class="btn btn-primary mr-3" data-toggle="modal" data-target="#deleteModal">מחיקת פריט</button>
-        <a type="button" class="btn btn-danger" href="{{ url_for('logout') }}">התנתק</a>
-    </div>
-    {% else %}
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal">התחברות</button>
-    {% endif %}
-</div>
-        <div class="text-center">
-            <img src="{{ url_for('static', filename='logo.png') }}" width="50%">
-        </div>
 
-        <div class="container">
-            <div class="row">
-                {%for image in images%}
-                    <div class="col-md-4">
-                      <div class="card mb-4 shadow">
-                        <img class="card-img-top" src="{{ url_for('static', filename='images/') }}{{ image.link }}">
-                          <ul class="list-group list-group-flush">
-                              <li class="list-group-item">{{ image.name }} :שם המוצר</li>
-                              <li class="list-group-item">{{ image.size }} :מידה</li>
-                              <li class="list-group-item">{{ image.comments }} :הערות</li>
-                          </ul>
-                      </div>
-                    </div>
-                {%endfor%}
-            </div>
-        </div>
 
-{% if logged %}
-<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="uploadModalLabel">העלאת פריט</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-          <form action="/upload" method="post" enctype="multipart/form-data" class="container">
-              <div class="form-group">
-                <label for="name">:שם פריט</label>
-                <input type="text" class="form-control" name="name" placeholder="הכנס שם פריט" required>
-              </div>
+<style>
+.container{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
 
-              <div class="form-group">
-                <label for="size">:מידה</label>
-                <select class="form-control" name="size" placeholder="מידה" required>
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
-                    <option>XL</option>
-                </select>
-              </div>
+<div class="container">
+        <a href="/">
+            <img src="{{ url_for('static', filename='python.svg') }}" alt="" width="180" height="180" >
+        </a>
 
-              <div class="form-group mb-4">
-                <label for="comments">:הערות</label>
-                <input type="text" class="form-control" name="comments" placeholder="הכנס הערות" required>
-              </div>
-
-              <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
-                  </div>
-                  <div class="custom-file">
-                    <input type="file" class="custom-file-input" name="image" aria-describedby="inputGroupFileAddon01" required>
-                    <label class="custom-file-label" for="image" style="text-align: left;">בחירת קובץ</label>
-                  </div>
-              </div>
-
-              <div class="mt-4 text-center">
-                  <button type="submit" class="btn btn-primary">הוסף</button>
-              </div>
-          </form>
-      </div>
-      </div>
-    </div>
-  </div>
+  {% if logged %}
+        <a class="btn-wow text-white shadow" href="{{ url_for('profile') }}"><strong>PROFILE</strong></a>
+        <a class="btn-sdw"></a>
+  {% else %}
+        <a class="btn-wow text-white shadow" href="{{ url_for('login') }}"><strong>LOGIN</strong></a>
+        <a class="btn-sdw"></a>
+  {% endif %}
 </div>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">מחיקת פריט</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-         <form class="form-signin" method="post" action="/delete">
-           <h1 class="h3 mb-3 font-weight-normal">:בחר פריט למחיקה</h1>
-           <select id="delete-username" name="delete-name" class="custom-select custom-select-md">
-                {%for image in images%}
-                <option value="{{ image.name }}">{{ image.name }}</option>
-                {%endfor%}
-           </select>
-           <button class="btn btn-lg btn-primary btn-block btn-danger mb-3 mt-3" type="submit">מחק</button>
-        </form>
-      </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-{% else %}
 
-<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="loginModalLabel">התחברות</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form class="form-signin" method="post" action="/login">
-            <label for="username">:שם משתמש</label>
-            <input type="text" id="username" class="form-control" name="username" placeholder="שם משתמש" required autofocus>
-            <label for="password">:סיסמא</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="סיסמא" required>
-            <button class="btn btn-lg btn-primary btn-block btn-failed mt-3" type="submit">התחברות</button>
-        </form>
-      </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% endif %}
 
 {% with messages = get_flashed_messages() %}
     {% if messages %}
