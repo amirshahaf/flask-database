@@ -1,9 +1,18 @@
-from flask import Flask, render_template, request, redirect, flash
+import os
+from flask import Flask, render_template, request, redirect, flash, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
+from werkzeug.utils import secure_filename
 
+# Image upload parameters
+MYDIR = os.path.dirname(__file__)
+UPLOAD_FOLDER = 'static/images/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+# Flask parameters
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 app.secret_key = '8a7f43415792dadc4d9e41fef6f45307'
 db = SQLAlchemy(app)
@@ -17,6 +26,7 @@ def load_user(username):
     return Users.query.get(username)
 
 
+# Database class init
 class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
@@ -30,11 +40,30 @@ class Users(UserMixin, db.Model):
         return '<Username %r>' % self.username
 
 
+class Images(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    size = db.Column(db.String, nullable=False)
+    comments = db.Column(db.String, nullable=False)
+    link = db.Column(db.String, unique=True, nullable=False)
+
+    def __init__(self, name, size, comments, link):
+        self.name = name
+        self.size = size
+        self.comments = comments
+        self.link = link
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.route('/', methods=['post', 'get'])
 def index():
     if current_user.is_authenticated:
-        return render_template('index.html', logged=True)
-    return render_template('index.html', logged=False)
+        return render_template('index.html', images=Images.query.all(), logged=True)
+    return render_template('index.html', images=Images.query.all(), logged=False)
 
 
 @app.route('/login', methods=['post', 'get'])
@@ -45,30 +74,13 @@ def login():
         user = Users.query.filter_by(username=username).first()
         if user is None:
             flash('Invalid Username or password, please try again.')
-            return redirect('/login')
+            return redirect('/')
         if not check_password_hash(user.passw, password):
             flash('Invalid Username or password, please try again.')
-            return redirect('/login')
+            return redirect('/')
         login_user(user)
         flash(f'{username} Successfully logged in!')
-        return redirect('/profile')
-    return render_template('login.html')
-
-
-@app.route('/register', methods=['post', 'get'])
-def register():
-    if request.form:
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if Users.query.filter_by(username=username).first():
-            flash('Username already registered!')
-            return redirect('/register')
-        user = Users(username=username, password=password)
-        db.session.add(user)
-        db.session.commit()
-        flash(f'{username} Successfully registered!')
-        return redirect('/login')
-    return render_template('register.html')
+    return redirect('/')
 
 
 @app.route('/logout')
@@ -79,38 +91,36 @@ def logout():
     return redirect('/login')
 
 
-@app.route('/profile', methods=['post', 'get'])
-@login_required
-def profile():
-    name = current_user.username
-    if request.form:
-        username = request.form.get('username')
-        password = request.form.get('password')
-        user = Users(username=username, password=password)
-        db.session.add(user)
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
+        file = request.files['image']
+        name = request.form.get('name')
+        size = request.form.get('size')
+        comments = request.form.get('comments')
+        link = file.filename
+        if Images.query.filter_by(name=name).first():
+            flash('נמצא פריט קיים')
+            return redirect('/')
+        image = Images(name=name, size=size, comments=comments, link=link)
+        db.session.add(image)
         db.session.commit()
-        flash(f'{request.form.get("username")} Successfully registered!')
-    return render_template('profile.html', users=Users.query.all(), username=name)
-
-
-@app.route('/update', methods=['post', 'get'])
-def update():
-    if request.form:
-        user = Users.query.filter_by(username=request.form.get('old-username')).first()
-        user.username = request.form.get('new-username')
-        db.session.commit()
-        flash(f'{request.form.get("new-username")} Successfully updated!')
-    return redirect('/profile')
+        flash(f' {name}נוסף בהצלחה ')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(MYDIR + "/" + app.config['UPLOAD_FOLDER'], filename))
+            return redirect('/')
+    return 'hello'
 
 
 @app.route('/delete', methods=['post', 'get'])
 def delete():
     if request.form:
-        user = Users.query.filter_by(username=request.form.get('delete-username')).first()
-        db.session.delete(user)
+        image = Images.query.filter_by(name=request.form.get('delete-name')).first()
+        db.session.delete(image)
         db.session.commit()
-        flash(f'Successfully deleted {request.form.get("delete-username")}')
-    return redirect('/profile')
+        flash(f'הפריט נמחק בהצלחה')
+    return redirect('/')
 
 
 if __name__ == '__main__':
